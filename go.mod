@@ -1,4 +1,4 @@
-module github.com/bitoex/bitopro-api-go
+module github.com/Eden-Sun/bitopro-api-go
 
 go 1.12
 

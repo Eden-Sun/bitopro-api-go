@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/bitoex/bitopro-api-go/internal"
+	"github.com/Eden-Sun/bitopro-api-go/internal"
 )
 
 // OrderInfo struct
