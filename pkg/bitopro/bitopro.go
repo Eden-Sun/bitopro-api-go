@@ -1,5 +1,9 @@
 package bitopro
 
+import (
+	"github.com/Eden-Sun/bitopro-api-go/internal"
+)
+
 // PubAPI struct
 type PubAPI struct{}
 
@@ -28,4 +32,8 @@ func GetAuthClient(identity, key, secret string) *AuthAPI {
 type StatusCode struct {
 	Code  int    `json:"code"`
 	Error string `json:"error,omitempty"`
+}
+
+func GetReqCounter() int {
+	return internal.GetReqCounter()
 }
