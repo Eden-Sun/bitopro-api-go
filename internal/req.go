@@ -4,11 +4,50 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 
 	"github.com/parnurzeal/gorequest"
 )
 
 const apiURL = "https://api.bitopro.com"
+
+var reqCounter = 0
+var counterLocker = sync.RWMutex{}
+
+var pubCounter = 0
+var proxyIps []string
+
+// GetReqCounter yields request counters
+func GetReqCounter() int {
+	return reqCounter
+}
+
+// SetupProxyIPs func
+func SetupProxyIPs(proxyServerS []string) {
+	proxyIps = proxyServerS
+}
+
+func upCount() {
+	counterLocker.Lock()
+	reqCounter++
+	defer counterLocker.Unlock()
+}
+
+// ReqProxyPublic func
+func ReqProxyPublic(api string) (int, string) {
+	go upCount()
+	pubCounter++
+	proxyCounter := len(proxyIps)
+	rpmAPIUrl := apiURL
+	if proxyCounter > 0 {
+		index := pubCounter % proxyCounter
+		rpmAPIUrl = proxyIps[index]
+	}
+	req := gorequest.New().Get(fmt.Sprintf("%s/%s", rpmAPIUrl, api))
+	req.Set("X-BITOPRO-API", "golang")
+	res, body, _ := req.End()
+	return res.StatusCode, body
+}
 
 // ReqPublic func
 func ReqPublic(api string) (int, string) {
@@ -23,6 +62,7 @@ func ReqPublic(api string) (int, string) {
 
 // ReqWithoutBody func
 func ReqWithoutBody(identity, apiKey, apiSecret, method, endpoint string) (int, string) {
+	go upCount()
 	payload := getNonPostPayload(identity, GetTimestamp())
 	sig := getSig(apiSecret, payload)
 	req := gorequest.New()
@@ -49,6 +89,7 @@ func ReqWithoutBody(identity, apiKey, apiSecret, method, endpoint string) (int, 
 
 // ReqWithBody func
 func ReqWithBody(identity, apiKey, apiSecret, endpoint string, param map[string]interface{}) (int, string) {
+	go upCount()
 	body, payload := getPostPayload(param)
 	sig := getSig(apiSecret, payload)
 	url := fmt.Sprintf("%s/%s", apiURL, endpoint)

@@ -55,3 +55,17 @@ func (*PubAPI) GetOrderBookWithLimit(pair string, limit int) *OrderBook {
 func (*AuthAPI) GetOrderBookWithLimit(pair string, limit int) *OrderBook {
 	return getOrderBook(pair, limit)
 }
+
+// GetOrderBookThroughProxy func
+func (*PubAPI) GetOrderBookThroughProxy(pair string, limit int) *OrderBook {
+	var data OrderBook
+
+	code, res := internal.ReqProxyPublic(fmt.Sprintf("%s/%s?limit=%d", "v2/order-book", pair, limit))
+	if err := json.Unmarshal([]byte(res), &data); err != nil {
+		data.Error = res
+	}
+
+	data.Code = code
+
+	return &data
+}

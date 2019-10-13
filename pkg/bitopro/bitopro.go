@@ -34,6 +34,12 @@ type StatusCode struct {
 	Error string `json:"error,omitempty"`
 }
 
+// GetReqCounter get total counter
 func GetReqCounter() int {
 	return internal.GetReqCounter()
+}
+
+// SetupProxyIPs func
+func SetupProxyIPs(proxyIPs []string) {
+	internal.SetupProxyIPs(proxyIPs)
 }
