@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/parnurzeal/gorequest"
 )
@@ -43,9 +44,12 @@ func ReqProxyPublic(api string) (int, string) {
 		index := pubCounter % proxyCounter
 		rpmAPIUrl = proxyIps[index]
 	}
-	req := gorequest.New().Get(fmt.Sprintf("%s/%s", rpmAPIUrl, api))
+	req := gorequest.New().Timeout(500 * time.Millisecond).Get(fmt.Sprintf("%s/%s", rpmAPIUrl, api))
 	req.Set("X-BITOPRO-API", "golang")
 	res, body, _ := req.End()
+	if res == nil {
+		return -1, ""
+	}
 	return res.StatusCode, body
 }
 
