@@ -48,7 +48,7 @@ func ReqProxyPublic(api string) (int, string) {
 	req.Set("X-BITOPRO-API", "golang")
 	res, body, _ := req.End()
 	if res == nil {
-		return -1, ""
+		return -1, rpmAPIUrl
 	}
 	return res.StatusCode, body
 }

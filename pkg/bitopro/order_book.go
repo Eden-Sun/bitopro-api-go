@@ -62,6 +62,7 @@ func (*PubAPI) GetOrderBookThroughProxy(pair string, limit int) *OrderBook {
 	code, res := internal.ReqProxyPublic(fmt.Sprintf("%s/%s?limit=%d", "v2/order-book", pair, limit))
 	if code != 200 {
 		data.Code = code
+		data.Error = res
 		return &data
 	}
 	if err := json.Unmarshal([]byte(res), &data); err != nil {
