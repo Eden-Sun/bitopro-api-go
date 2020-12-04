@@ -50,6 +50,9 @@ func ReqProxyPublic(api string) (int, string) {
 	if res == nil {
 		return -1, rpmAPIUrl
 	}
+	if res.StatusCode != 200 {
+		fmt.Println(rpmAPIUrl, " got error:")
+	}
 	return res.StatusCode, body
 }
 
